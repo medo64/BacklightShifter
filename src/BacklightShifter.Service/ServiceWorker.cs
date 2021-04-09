@@ -21,19 +21,30 @@ namespace BacklightShifter.Service {
         private static readonly Thread Thread = new Thread(Run) { Name = "Service Worker" };
 
         private static void Run() {
-            var lastStatus = PowerStatus.Current;
+            var stopwatchDelaySave = new Stopwatch();
+
+            var lastStatus = PowerLineStatus.Unknown;
             while (!CancelEvent.WaitOne(500)) {
                 var currStatus = PowerStatus.Current;
                 var currLevel = Backlight.Level;
+                var storedLevel = Storage.GetLevel(currStatus, currLevel);
 
                 if (currStatus != lastStatus) {
-                    Debug.WriteLine("NewStatus:" + currStatus);
-                    var storedLevel = Storage.GetLevel(currStatus, currLevel);
+                    Debug.WriteLine($"[Worker] Status change: {lastStatus} -> {currStatus}");
                     if (storedLevel != currLevel) {
                         Backlight.Level = storedLevel;
+                        Debug.WriteLine($"[Worker] Level restored: {storedLevel}% ({currStatus} was {currLevel}%)");
+                        stopwatchDelaySave.Restart();
                     }
-                } else {
+                } else if (stopwatchDelaySave.IsRunning && (stopwatchDelaySave.ElapsedMilliseconds > 1000)) {  // do it again as sometime it doesn't "take"
+                    if (currLevel != storedLevel) {
+                        Backlight.Level = storedLevel;
+                        Debug.WriteLine($"[Worker] Level restored (2): {storedLevel}% ({currStatus} was {currLevel}%)");
+                    }
+                    stopwatchDelaySave.Stop();  // re-enable saving
+                } else if (!stopwatchDelaySave.IsRunning && (currLevel != storedLevel)) {  // save
                     Storage.SetLevel(currStatus, currLevel);
+                    Debug.WriteLine($"[Worker] Level stored: {currLevel}% ({currStatus})");
                 }
                 lastStatus = currStatus;
             }

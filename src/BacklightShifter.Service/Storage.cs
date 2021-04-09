@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -9,25 +10,28 @@ namespace BacklightShifter {
     internal static class Storage {
 
         public static int GetLevel(PowerLineStatus powerStatus, int currentLevel) {
-            Init();
+            Load();
             if (LevelPerPowerStatus.TryGetValue(powerStatus, out var level)) {
                 return level;
             } else {
                 LevelPerPowerStatus.Add(powerStatus, currentLevel);
                 Save();
+                Debug.WriteLine($"[Storage] Read: {powerStatus} {level}% (default)");
                 return currentLevel;
             }
         }
 
         public static void SetLevel(PowerLineStatus powerStatus, int newLevel) {
-            Init();
+            Load();
             if (LevelPerPowerStatus.TryGetValue(powerStatus, out var storedLevel)) {
                 if (storedLevel != newLevel) {
                     LevelPerPowerStatus[powerStatus] = newLevel;
+                    Debug.WriteLine($"[Storage] Write: {powerStatus} {newLevel}%");
                     Save();
                 }
             } else {
                 LevelPerPowerStatus.Add(powerStatus, newLevel);
+                Debug.WriteLine($"[Storage] Write: {powerStatus} {newLevel}% (new)");
                 Save();
             }
         }
@@ -37,8 +41,9 @@ namespace BacklightShifter {
 
         private static bool isInitialized;
 
-        private static void Init() {
+        private static void Load() {
             if (isInitialized) { return; }
+            Debug.WriteLine($"[Storage] Load");
 
             GetPaths(out _, out var configFile);
             try {
@@ -64,6 +69,7 @@ namespace BacklightShifter {
         }
 
         private static void Save() {
+            Debug.WriteLine($"[Storage] Save");
             GetPaths(out var configDir, out var configFile);
             try {
                 if (!Directory.Exists(configDir)) { Directory.CreateDirectory(configDir); }
