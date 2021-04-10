@@ -12,14 +12,15 @@ namespace BacklightShifter {
         private static NotifyIcon Notification;
 
         internal static void Show() {
-            Notification = new NotifyIcon();
-            Notification.ContextMenu = new ContextMenu();
+            Notification = new NotifyIcon {
+                Icon = GetApplicationIcon(),
+                Text = Medo.Reflection.EntryAssembly.Title,
+                Visible = true,
+                ContextMenu = new ContextMenu()
+            };
             Notification.ContextMenu.MenuItems.Add(
                 new MenuItem("Exit", delegate { Application.Exit(); } )
             );
-            Notification.Icon = GetApplicationIcon();
-            Notification.Text = Medo.Reflection.EntryAssembly.Title;
-            Notification.Visible = true;
         }
 
         internal static void SetStatusToRunningInteractive() {
