@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32.SafeHandles;
 
-namespace BacklightShifter.Service {
+namespace BacklightShifter {
     internal static class ServiceWorker {
 
         public static void Start() {

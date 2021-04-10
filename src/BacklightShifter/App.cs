@@ -5,10 +5,14 @@ namespace BacklightShifter {
     internal static class App {
 
         [STAThread]
-        private static void Main() {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+        internal static void Main() {
+            Tray.Show();
+            ServiceWorker.Start();
+            Tray.SetStatusToRunningInteractive();
+            Application.Run();
+            ServiceWorker.Stop();
+            Tray.Hide();
+            Environment.Exit(0);
         }
 
     }
