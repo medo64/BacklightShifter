@@ -5,6 +5,13 @@
 #define AppCopyright   GetStringFileInfo('..\..\bin\BacklightShifter.exe', 'LegalCopyright')
 #define AppBase        LowerCase(StringChange(AppName, ' ', ''))
 
+#define AppVersionEx   AppVersion
+#ifdef BuildMetadata
+#  if "" != BuildMetadata
+#    define AppVersionEx AppVersionEx + "+" + BuildMetadata
+#  endif
+#endif
+
 
 [Setup]
 AppName={#AppName}
@@ -14,7 +21,7 @@ AppPublisher={#AppCompany}
 AppPublisherURL=https://medo64.com/{#AppBase}/
 AppCopyright={#AppCopyright}
 VersionInfoProductVersion={#AppVersion}
-VersionInfoProductTextVersion={#AppVersion}
+VersionInfoProductTextVersion={#AppVersionEx}
 VersionInfoVersion={#AppFileVersion}
 DefaultDirName={pf}\{#AppCompany}\{#AppName}
 SourceDir=..\..\bin
