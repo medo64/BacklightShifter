@@ -38,18 +38,30 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\App.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>BacklightShifter.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="%28Medo%29\EntryAssembly [003].cs" />
     <Compile Include="App.cs" />
+    <Compile Include="AppService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="AppServiceInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceStatusThread.cs" />
     <Compile Include="ServiceWorker.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Tray.cs" />
