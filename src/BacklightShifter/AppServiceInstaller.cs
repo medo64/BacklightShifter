@@ -10,7 +10,7 @@ namespace BacklightShifter {
 
         public AppServiceInstaller() {
             var processInstaller = new ServiceProcessInstaller {
-                Account = ServiceAccount.LocalSystem,
+                Account = ServiceAccount.LocalService,
                 Username = null,
                 Password = null
             };
